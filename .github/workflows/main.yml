@@ -1,0 +1,25 @@
+name: setup-vsdevenv
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: test
+    runs-on: ${{ matrix.image }}
+
+    strategy:
+      matrix:
+        image: [ 'windows-latest', 'ubuntu-latest' ]
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - uses: ./
+        with:
+          winsdk: 10.0.26100.0
+      - run: 'cl /EHsc /Fe:test.exe tests\\test.cpp && .\\test.exe'
+        if: runner.os == 'Windows'
